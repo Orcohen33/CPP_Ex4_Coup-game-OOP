@@ -77,26 +77,57 @@ TEST_CASE("Check functions")
     }
     SUBCASE("Captain functions")
     {
-        Game game{};
-        Duke duke{game, "Moshe"};
-        Assassin assassin{game, "Yossi"};
-        Captain captain1{game, "Meirav"};
-        Captain captain2{game, "Reut"};
-        // round 1
-        duke.income();     // 1 coin
-        assassin.income(); // 1 coin
-        captain1.income(); // 1 coin
-        captain2.income(); // 1 coin
-        // round 2
-        duke.income();          // 2 coins
-        assassin.foreign_aid(); // 3 coins
-        captain1.steal(duke);   // 3 coins
-        // Test if 'steal' function work
-        CHECK(duke.coins() == 0);
-        // Test if captain can block steal function
-        captain2.block(captain1); // captain2 blocks captain1 steal function.
-        CHECK(duke.coins() == 2);
-        captain2.income(); // 2 coins
+        SUBCASE("steal 2 coins && block")
+        {
+            Game game{};
+            Duke duke{game, "Moshe"};
+            Assassin assassin{game, "Yossi"};
+            Captain captain1{game, "Meirav"};
+            Captain captain2{game, "Reut"};
+            // round 1
+            duke.income();     // 1 coin
+            assassin.income(); // 1 coin
+            captain1.income(); // 1 coin
+            captain2.income(); // 1 coin
+            // round 2
+            duke.income();          // 2 coins
+            assassin.foreign_aid(); // 3 coins
+            captain1.steal(duke);   // 3 coins
+            // Test if 'steal' function work
+            CHECK(duke.coins() == 0);
+            // Test if captain can block steal function
+            captain2.block(captain1); // captain2 blocks captain1 steal function.
+            CHECK(duke.coins() == 2);
+            captain2.income(); // 2 coins
+        }
+        SUBCASE("steal 1 coin")
+        {
+            Game game{};
+            Duke duke{game, "Moshe"};
+            Assassin assassin{game, "Yossi"};
+            Captain captain{game, "Meirav"};
+            // ---------------------------- round 1 start ----------------------------
+            duke.income();     // 1 coin
+            assassin.income(); // 1 coin
+            CHECK(duke.coins() == 1);
+            captain.steal(duke); // 1 coin
+            CHECK(duke.coins() == 0);
+            CHECK(captain.coins() == 1);
+            // ---------------------------- round 1 end ----------------------------
+        }
+        SUBCASE("steal 0 coin")
+        {
+            Game game{};
+            Captain captain{game, "Meirav"};
+            Duke duke{game, "Moshe"};
+            Assassin assassin{game, "Yossi"};
+            // ---------------------------- round 1 start ----------------------------
+            captain.steal(duke); // 0 coin
+            CHECK(captain.coins() == 0);
+            duke.income();
+            assassin.income();
+            // ---------------------------- round 1 end ----------------------------
+        }
     }
     SUBCASE("Contessa functions")
     {
